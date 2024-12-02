@@ -17,7 +17,7 @@ public class Main {
             System.out.println(new String(i));
         }
 
-        Command command = new Command();
+        Command command = new Command(3);
         command.UserInput();
 
 

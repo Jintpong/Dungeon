@@ -7,19 +7,22 @@ public class Main {
         char[][] map = game_map.get_Map();
 
 
-        // Find the center position to place the player "P"
-        int Y = map.length / 2;
-        int X = map[0].length / 2;
-        map[Y][X] = 'P';
+        // Need to change so that player spawn randomly
+        int playerX = map.length / 2;
+        int playerY = map[0].length / 2;
+        map[playerX][playerY] = 'P';
+
+        int botX = playerX + 1;
+        int botY = playerY - 1;
+        map[botX][botY] = 'B';
 
         //Print out the map
         for (char[] i : map) {
             System.out.println(new String(i));
         }
 
-        Command command = new Command(3);
+        Command command = new Command(map);
         command.UserInput();
-
 
     }
 }

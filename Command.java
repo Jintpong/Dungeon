@@ -22,6 +22,8 @@ public class Command {
         this.goldtowin = 3;
         this.playergold = 0;
         this.endgame = false;
+        map[playerX][playerY] = 'P';
+        map[botX][botY] = 'B';
     }
 //Need to create a while loop to keep asking the user until the game is finnished
     // Creating a method to process user input
@@ -29,26 +31,30 @@ public class Command {
     while (!endgame) {
         System.out.println("Enter a command: ");
         
-        // Use Scanner if System.console() is unavailable
+
         String command;
         if (System.console() != null) {
             command = System.console().readLine().toUpperCase();
-        } else {
+        } 
+        else {
             System.out.println("Console is not available. Please run in a terminal.");
-            break; // Exit the game loop
+            break; 
         }
 
         // Check the command
         if (command.equals("HELLO")) {
             System.out.println("Gold to win: " + goldtowin);
-        } else if (command.equals("GOLD")) {
+        } 
+        else if (command.equals("GOLD")) {
             System.out.println("Gold owned: " + playergold);
-        } else if (command.equals("PICKUP")) {
+        } 
+        else if (command.equals("PICKUP")) {
             if (map[playerX][playerY] == 'G') { // Use .equals for string comparison
                 playergold += 1;
                 map[playerX][playerY] = '.'; // Replace gold with empty space
                 System.out.println("Success. Gold owned: " + playergold);
-            } else {
+            } 
+            else {
                 System.out.println("Fail. Gold owned: " + playergold);
             }
         } else if (command.startsWith("MOVE")) {
@@ -59,28 +65,42 @@ public class Command {
             // Update position based on direction
             if (direction.equals("N")) {
                 new_x -= 1;
-            } else if (direction.equals("S")) {
+            } 
+            else if (direction.equals("S")) {
                 new_x += 1;
-            } else if (direction.equals("E")) {
+            } 
+            else if (direction.equals("E")) {
                 new_y += 1;
-            } else if (direction.equals("W")) {
+            } 
+            else if (direction.equals("W")) {
                 new_y -= 1;
-            } else {
+            } 
+            else {
                 System.out.println("Invalid Direction");
                 continue;
             }
 
             // Check new position
             if (new_x >= 0 && new_x < map.length && new_y >= 0 && new_y < map[0].length) {
-                if (map[new_x][new_y] != '#') { // Ensure it's not a wall
+                if (map[new_x][new_y] != '#') { 
+                    //Clear old positon
+                    map[playerX][playerY] = '.';
                     playerX = new_x;
                     playerY = new_y;
+                    //Take mark of the new position
+                    map[playerX][playerY] = 'P';
                     System.out.println("Success");
-                } else {
-                    System.out.println("Fail. Position is a wall.");
+                    //Print the new map base on the user direction
+                    for(char[] row : map){
+                        System.out.println(new String(row));
+                    }
+                } 
+                else {
+                    System.out.println("Fail");
                 }
-            } else {
-                System.out.println("Fail. Position is out of bounds.");
+            } 
+            else {
+                System.out.println("Fail the position is out of bound");
             }
         } else if (command.equals("LOOK")) {
             // Display 5x5 grid around the player
@@ -91,11 +111,14 @@ public class Command {
 
                     if (x == playerX && y == playerY) {
                         System.out.print("P");
-                    } else if (x == botX && y == botY) {
+                    } 
+                    else if (x == botX && y == botY) {
                         System.out.print("B");
-                    } else if (x >= 0 && x < map.length && y >= 0 && y < map[0].length) {
+                    } 
+                    else if (x >= 0 && x < map.length && y >= 0 && y < map[0].length) {
                         System.out.print(map[x][y]);
-                    } else {
+                    } 
+                    else {
                         System.out.print("#");
                     }
                 }
@@ -105,11 +128,13 @@ public class Command {
             // Check win condition
             if (map[playerX][playerY] == 'E' && playergold >= goldtowin) {
                 System.out.println("WIN");
-            } else {
+            } 
+            else {
                 System.out.println("LOSE");
             }
             endgame = true; // Exit the game loop
-        } else {
+        } 
+        else {
             System.out.println("Unknown command");
         }
     }

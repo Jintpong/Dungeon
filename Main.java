@@ -8,20 +8,22 @@ public class Main {
 
 
         // Need to change so that player spawn randomly
-        int playerX = map.length / 2;
+        /*int playerX = map.length / 2;
         int playerY = map[0].length / 2;
         map[playerX][playerY] = 'P';
 
         int botX = playerX + 1;
         int botY = playerY - 1;
         map[botX][botY] = 'B';
+        */
 
-        //Print out the map
+
+        Command command = new Command(map);
+
         for (char[] i : map) {
             System.out.println(new String(i));
         }
-
-        Command command = new Command(map);
+        
         command.UserInput();
 
     }

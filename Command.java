@@ -15,10 +15,12 @@ public class Command {
     private boolean[][] positionExit;
     //Will use this in the while loop to keep track that as long as the game is not over continue asking the player
     private boolean endgame;
+    private Bot bot;
 
     // Constructor
     public Command(char[][] map) {
         this.map = map;
+        this.bot = new Bot(botX, botY);
         // Initialise the position of gold
         this.positionGold = new boolean[map.length][map[0].length];
         for (int i = 0; i < map.length; i++){
@@ -51,47 +53,7 @@ public class Command {
         map[playerX][playerY] = 'P';
         map[botX][botY] = 'B';
     }
-    //Will use this to process the Bot turn
-    public void BotCommand(String command){
-        String botCommand = Bot.BotCommand(map, playerX, playerY);
-        if (botCommand.equals("Move")){
-            String bot_direction = botCommand.substring(5).toUpperCase();
-            int new_botX = botX;
-            int new_botY = botY;
 
-            if (bot_direction.equals("N")) {
-                new_botX -= 1;
-            } 
-            else if (bot_direction.equals("S")) {
-                new_botX += 1;
-            } 
-            else if (bot_direction.equals("E")) {
-                new_botY += 1;
-            } 
-            else if (bot_direction.equals("W")) {
-                new_botY -= 1;
-            } 
-
-            //Checking the move
-            if (new_botX >= 0 && new_botX < map.length && new_botY >= 0 && new_botY < map[0].length && map[new_botX][new_botY] != '#' && map[new_botX][new_botY] != 'P'){
-                map[botX][botY] = '.';
-                botX = new_botX;
-                botY = new_botY;
-                map[botX][botY] = 'B';
-            }
-        else if (BotCommand.equals("PICKUP")){
-            if (positionGold[botX][botY]){
-                botGold += 1;
-                positionGold[botX][botY] = false;
-                System.out.println("Bot have picked up the gold, Bot Gold owned: " + botGold); 
-            }
-            else {
-                System.out.println("Bot attempts to pick the gold, but there was no gold");
-            }
-        }
-
-        }
-    }
 
     public void HumanCommand(String command) {
         if (command.equals("QUIT")) {
@@ -151,17 +113,16 @@ public class Command {
             }
         } else if (command.equals("PICKUP")) {
             // Handle PICKUP logic
-            if (goldMap[playerX][playerY]) {
-                playerGold += 1;
-                goldMap[playerX][playerY] = false; // Remove gold from the map
-                System.out.println("Success! Gold owned: " + playerGold);
+            if (positionGold[playerX][playerY]) {
+                playergold += 1;
+                positionGold[playerX][playerY] = false; // Remove gold from the map
+                System.out.println("Success! Gold owned: " + playergold);
             } else {
                 System.out.println("Fail. No gold to pick up.");
             }
-        } else if (command.equals("LOOK")) {
-            // Display LOOK logic
-            displayLook();
-        } else {
+        } 
+         else 
+         {
             System.out.println("Unknown command. Try again.");
         }
     }
@@ -177,15 +138,15 @@ public class Command {
 
         if (System.console() != null) {
             command = System.console().readLine().toUpperCase();
-         
-
             // Human Player turn
             HumanCommand(command);
 
+            if (endgame) break;
+
             // Bot turn 
-            String botCommand = Bot.BotCommand(map, playerX, playerY);
+            String botCommand = bot.ProcessBotCommand(map, playerX, playerY, positionGold);
             System.out.println("Bot command: " + botCommand);
-            BotCommand(botCommand);
+            bot.ProcessBotCommand(map, playerX, playerY, positionGold);
         }
 
         else 
@@ -317,3 +278,52 @@ public class Command {
 
 
 }
+
+    //Will use this to process the Bot turn
+    /*public void ProcessBotCommand(String command, char[][] map, boolean[][] positionGold) {
+        // Handle MOVE command
+        if (command.startsWith("MOVE")) {
+            String bot_direction = command.substring(5).toUpperCase(); // Extract direction
+            int new_botX = botX;
+            int new_botY = botY;
+
+            // Determine the new position
+            if (bot_direction.equals("N")) {
+                new_botX -= 1;
+            } else if (bot_direction.equals("S")) {
+                new_botX += 1;
+            } else if (bot_direction.equals("E")) {
+                new_botY += 1;
+            } else if (bot_direction.equals("W")) {
+                new_botY -= 1;
+            }
+
+            // Validate the move
+            if (new_botX >= 0 && new_botX < map.length && new_botY >= 0 && new_botY < map[0].length 
+                    && map[new_botX][new_botY] != '#' && map[new_botX][new_botY] != 'P') {
+                // Update map and bot's position
+                map[botX][botY] = '.'; // Clear old position
+                botX = new_botX;
+                botY = new_botY;
+                map[botX][botY] = 'B'; // Mark new position
+                System.out.println("Bot moved to (" + botX + ", " + botY + ").");
+            } else {
+                System.out.println("Bot move failed. Invalid position.");
+            }
+        } 
+        // Handle PICKUP command
+        else if (command.equals("PICKUP")) {
+            if (positionGold[botX][botY]) { // Check if there's gold at bot's position
+                bot.setGold(bot.getGold() + 1); // Increase bot's gold
+                positionGold[botX][botY] = false; // Remove gold
+                System.out.println("Bot picked up gold. Bot Gold owned: " + botGold);
+            } else {
+                System.out.println("Bot attempted to pick up gold, but there was none.");
+            }
+        } 
+        // Handle invalid commands
+        else {
+            System.out.println("Unknown bot command: " + command);
+        }
+    }
+    */

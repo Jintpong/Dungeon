@@ -51,19 +51,146 @@ public class Command {
         map[playerX][playerY] = 'P';
         map[botX][botY] = 'B';
     }
+    //Will use this to process the Bot turn
+    public void BotCommand(String command){
+        String botCommand = Bot.BotCommand(map, playerX, playerY);
+        if (botCommand.equals("Move")){
+            String bot_direction = botCommand.substring(5).toUpperCase();
+            int new_botX = botX;
+            int new_botY = botY;
+
+            if (bot_direction.equals("N")) {
+                new_botX -= 1;
+            } 
+            else if (bot_direction.equals("S")) {
+                new_botX += 1;
+            } 
+            else if (bot_direction.equals("E")) {
+                new_botY += 1;
+            } 
+            else if (bot_direction.equals("W")) {
+                new_botY -= 1;
+            } 
+
+            //Checking the move
+            if (new_botX >= 0 && new_botX < map.length && new_botY >= 0 && new_botY < map[0].length && map[new_botX][new_botY] != '#' && map[new_botX][new_botY] != 'P'){
+                map[botX][botY] = '.';
+                botX = new_botX;
+                botY = new_botY;
+                map[botX][botY] = 'B';
+            }
+        else if (BotCommand.equals("PICKUP")){
+            if (positionGold[botX][botY]){
+                botGold += 1;
+                positionGold[botX][botY] = false;
+                System.out.println("Bot have picked up the gold, Bot Gold owned: " + botGold); 
+            }
+            else {
+                System.out.println("Bot attempts to pick the gold, but there was no gold");
+            }
+        }
+
+        }
+    }
+
+    public void HumanCommand(String command) {
+        if (command.equals("QUIT")) {
+            System.out.println("Player quit the game.");
+            endgame = true; // End the game loop
+        } else if (command.startsWith("MOVE")) {
+            // Existing MOVE logic
+            String direction = command.substring(5).toUpperCase().trim(); // Extract direction
+            int new_x = playerX;
+            int new_y = playerY;
+
+            // Update position based on direction
+            if (direction.equals("N")) {
+                new_x -= 1;
+            } else if (direction.equals("S")) {
+                new_x += 1;
+            } else if (direction.equals("E")) {
+                new_y += 1;
+            } else if (direction.equals("W")) {
+                new_y -= 1;
+            } else {
+                System.out.println("Invalid Direction");
+                return; // Exit early on invalid direction
+            }
+
+            // Check new position
+            if (new_x >= 0 && new_x < map.length && new_y >= 0 && new_y < map[0].length) {
+                // Check that it's not a wall
+                if (map[new_x][new_y] != '#') {
+                    // Handle moving to exit
+                    if (positionExit[new_x][new_y]) {
+                        map[new_x][new_y] = 'P';
+                    }
+                    // Handle moving to gold
+                    else if (map[new_x][new_y] == 'G') {
+                        map[new_x][new_y] = 'P';
+                    }
+
+                    // Clear old position
+                    map[playerX][playerY] = '.';
+                    playerX = new_x;
+                    playerY = new_y;
+
+                    // Mark the new position
+                    map[playerX][playerY] = 'P';
+                    System.out.println("Success");
+
+                    // Print the updated map
+                    for (char[] row : map) {
+                        System.out.println(new String(row));
+                    }
+                } else {
+                    System.out.println("Fail! Cannot move into a wall.");
+                }
+            } else {
+                System.out.println("Fail! The position is out of bounds.");
+            }
+        } else if (command.equals("PICKUP")) {
+            // Handle PICKUP logic
+            if (goldMap[playerX][playerY]) {
+                playerGold += 1;
+                goldMap[playerX][playerY] = false; // Remove gold from the map
+                System.out.println("Success! Gold owned: " + playerGold);
+            } else {
+                System.out.println("Fail. No gold to pick up.");
+            }
+        } else if (command.equals("LOOK")) {
+            // Display LOOK logic
+            displayLook();
+        } else {
+            System.out.println("Unknown command. Try again.");
+        }
+    }
+
+
+
 //Need to create a while loop to keep asking the user until the game is finnished
     // Creating a method to process user input
     public void UserInput() {
     while (!endgame) {
         System.out.println("Enter a command: ");
-        
-
         String command;
+
         if (System.console() != null) {
             command = System.console().readLine().toUpperCase();
-        } 
-        else {
-            System.out.println("Console is not available. Please run in a terminal.");
+         
+
+            // Human Player turn
+            HumanCommand(command);
+
+            // Bot turn 
+            String botCommand = Bot.BotCommand(map, playerX, playerY);
+            System.out.println("Bot command: " + botCommand);
+            BotCommand(botCommand);
+        }
+
+        else 
+        {
+            System.out.println("Please run in a terminal.");
             break; 
         }
 
@@ -86,7 +213,7 @@ public class Command {
             else {
                 System.out.println("Fail. Gold owned: " + playergold);
             }
-        } else if (command.startsWith("MOVE")) {
+        } else if (command.equals("MOVE")) {
             String direction = command.substring(5).toUpperCase().trim(); // Extract direction
             int new_x = playerX;
             int new_y = playerY;

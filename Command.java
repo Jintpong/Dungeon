@@ -9,12 +9,25 @@ public class Command {
     //The position of the bot
     private int botX;
     private int botY;
+    // Use this to keep track of the position of 'G'
+    private boolean[][] positionGold;
     //Will use this in the while loop to keep track that as long as the game is not over continue asking the player
     private boolean endgame;
 
     // Constructor
     public Command(char[][] map) {
         this.map = map;
+        this.positionGold = new boolean[map.length][map[0].length];
+        for (int i = 0; i < map.length; i++){
+            for (int j = 0; j < map[i].length; j++){
+                if (map[i][j] == 'G'){
+                    positionGold[i][j] = true;
+                }
+
+            }
+        }
+
+
         this.playerX = 3;
         this.playerY = 3;
         this.botX = 4;
@@ -49,9 +62,12 @@ public class Command {
             System.out.println("Gold owned: " + playergold);
         } 
         else if (command.equals("PICKUP")) {
-            if (map[playerX][playerY] == 'G') { // Use .equals for string comparison
+            // checking when the player is in the same position with the gold
+            if (positionGold[playerX][playerY]) { 
+                // Increase the amount of gold
                 playergold += 1;
-                map[playerX][playerY] = '.'; // Replace gold with empty space
+                positionGold[playerX][playerY] = false;
+                //map[playerX][playerY] = 'P'; 
                 System.out.println("Success. Gold owned: " + playergold);
             } 
             else {
@@ -83,6 +99,9 @@ public class Command {
             // Check new position
             if (new_x >= 0 && new_x < map.length && new_y >= 0 && new_y < map[0].length) {
                 if (map[new_x][new_y] != '#') { 
+                    if (map[new_x][new_y] == 'G'){
+                        map[new_x][new_y] = 'P';
+                    }
                     //Clear old positon
                     map[playerX][playerY] = '.';
                     playerX = new_x;
@@ -90,6 +109,8 @@ public class Command {
                     //Take mark of the new position
                     map[playerX][playerY] = 'P';
                     System.out.println("Success");
+
+
                     //Print the new map base on the user direction
                     for(char[] row : map){
                         System.out.println(new String(row));
@@ -115,6 +136,9 @@ public class Command {
                     else if (x == botX && y == botY) {
                         System.out.print("B");
                     } 
+                    else if (positionGold[x][y]){
+                        System.out.print("G");
+                    }
                     else if (x >= 0 && x < map.length && y >= 0 && y < map[0].length) {
                         System.out.print(map[x][y]);
                     } 

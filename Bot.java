@@ -1,4 +1,4 @@
-import java.lang.Math;
+/*import java.lang.Math;
 
 public class Bot {
     private int bot_position_X;
@@ -35,6 +35,7 @@ public class Bot {
                 }
             }
         }
+        return bestMove;
 
         // Execute the best move
         if (!bestMove.isEmpty()) {
@@ -61,6 +62,7 @@ public class Bot {
             } else {
                 System.out.println("Bot move failed.");
             }
+            return bestMove;
         }
 
     // Check for gold pickup

@@ -9,6 +9,14 @@ public class BotMove{
         this.botY = start_Y;
     }
 
+    public int getBotX(){
+        return botX;
+    }
+
+    public int getBotY(){
+        return botY;
+    }
+
     public String getBotCommand(char[][] map, int playerX, int playerY){
         String[] moves = {"Move N", "Move S", "Move W", "Move E"};
         int[] change_in_x = {-1, 1, 0, 0};

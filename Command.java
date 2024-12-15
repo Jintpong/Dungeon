@@ -151,6 +151,22 @@ public class Command {
                 // Bot turn 
                 String botCommand = bot.getBotCommand(map, playerX, playerY);
                 System.out.println("Bot command: " + botCommand);
+                // Update the bot position
+                int newBotX = bot.getBotX();
+                int newBotY = bot.getBotY();
+                if(newBotX == playerX && newBotY == playerY){
+                    System.out.println("The bot has caught the player");
+                    endgame = true;
+                }
+                else{
+                    // update the map position
+                    if (map[newBotX][newBotY] != '#'){
+                        map[botX][botY] = '.';
+                        botX = newBotX;
+                        botY = newBotY;
+                        map[botX][botY] = 'B';
+                    }
+                }
                 
             }
 

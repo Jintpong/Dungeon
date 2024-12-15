@@ -1,6 +1,5 @@
 import java.lang.Math;
 
-
 public class BotMove{
     private int botX;
     private int botY; 

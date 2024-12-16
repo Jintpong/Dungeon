@@ -167,11 +167,9 @@ public class Command {
  
         else 
          {
-            System.out.println("Unknown command. Try again.");
+            System.out.println("Unknown command");
         }
     }
-
-
 
 //Need to create a while loop to keep asking the user until the game is finnished
     // Creating a method to process user input
@@ -189,8 +187,8 @@ public class Command {
 
 
                 // Bot turn 
-                //String botCommand = bot.getBotCommand(map, playerX, playerY);
-                //System.out.println("Bot command: " + botCommand);
+                String botCommand = bot.getBotCommand(map, playerX, playerY);
+                System.out.println("Bot command: " + botCommand);
 
                 
             }

@@ -1,152 +1,52 @@
-/*import java.lang.Math;
+import java.util.Random;
 
 public class Bot {
-    private int bot_position_X;
-    private int bot_position_Y;
-    private int botGold;
+    private int botX;
+    private int botY;
 
-    public Bot(int X_value, int Y_value){
-        this.bot_position_X = X_value;
-        this.bot_position_Y = Y_value;
-        this.botGold = 0;
+    public Bot(int start_X, int start_Y) {
+        this.botX = start_X;
+        this.botY = start_Y;
     }
-    
 
-    public String ProcessBotCommand(char[][] map, int playerX, int playerY, boolean[][] positionGold) {
-        String[] moves = {"MOVE N", "MOVE S", "MOVE W", "MOVE E"};
+    public int getBotX() {
+        return botX;
+    }
+
+    public int getBotY() {
+        return botY;
+    }
+
+    public String getBotCommand(char[][] map, int playerX, int playerY) {
+        // Directions and their effects on bot position
+        String[] moves = {"Move N", "Move S", "Move W", "Move E"};
         int[] change_in_x = {-1, 1, 0, 0};
         int[] change_in_y = {0, 0, -1, 1};
-        double min_distance = Double.MAX_VALUE;
-        String bestMove = "";
 
-        // Determine the best move
-        for (int i = 0; i < moves.length; i++) {
-            int newbotX = bot_position_X + change_in_x[i];
-            int newbotY = bot_position_Y + change_in_y[i];
-
-            if (newbotX >= 0 && newbotX < map.length && newbotY >= 0 && newbotY < map[0].length 
-                    && map[newbotX][newbotY] != '#') {
-                double distance_to_player = Math.sqrt(
-                    Math.pow(playerX - newbotX, 2) + Math.pow(playerY - newbotY, 2));
-
-                if (distance_to_player < min_distance) {
-                    min_distance = distance_to_player;
-                    bestMove = moves[i];
-                }
-            }
-        }
-        return bestMove;
-
-        // Execute the best move
-        if (!bestMove.isEmpty()) {
-            int newBotX = bot_position_X;
-            int newBotY = bot_position_Y;
-
-            if (bestMove.equals("MOVE N")) {
-                newBotX -= 1;
-            } else if (bestMove.equals("MOVE S")) {
-                newBotX += 1;
-            } else if (bestMove.equals("MOVE W")) {
-                newBotY -= 1;
-            } else if (bestMove.equals("MOVE E")) {
-                newBotY += 1;
-            }
-
-            if (newBotX >= 0 && newBotX < map.length && newBotY >= 0 && newBotY < map[0].length 
-                    && map[newBotX][newBotY] != '#' && map[newBotX][newBotY] != 'P') {
-                map[bot_position_X][bot_position_Y] = '.'; // Clear old position
-                bot_position_X = newBotX;
-                bot_position_Y = newBotY;
-                map[bot_position_X][bot_position_Y] = 'B'; // Mark new position
-                System.out.println("Bot moved to (" + bot_position_X + ", " + bot_position_Y + ").");
-            } else {
-                System.out.println("Bot move failed.");
-            }
-            return bestMove;
+        // Check if the bot is in the same position as the player
+        if (botX == playerX && botY == playerY) {
+            return "Bot reached the player!";
         }
 
-    // Check for gold pickup
-    if (positionGold[bot_position_X][bot_position_Y]) {
-        botGold += 1;
-        positionGold[bot_position_X][bot_position_Y] = false; // Remove gold
-        System.out.println("Bot picked up gold. Total Gold: " + botGold);
-    }
+        // Try random moves until a valid one is found
+        Random random = new Random();
+        while (true) {
+            int randomIndex = random.nextInt(moves.length);
+            int newBotX = botX + change_in_x[randomIndex];
+            int newBotY = botY + change_in_y[randomIndex];
 
-    return bestMove.isEmpty() ? "MOVE N" : bestMove; // Return the best move or default
-}
+            // Check if the move is within bounds and not blocked
+            if (newBotX >= 0 && newBotX < map.length &&
+                newBotY >= 0 && newBotY < map[0].length &&
+                map[newBotX][newBotY] != '#') {
 
-
-    public int getGold(){
-        return botGold;
-    }
-
-    public void setGold(int gold){
-        this.botGold = gold;
-    }
-
-    /*public void ProcessBotCommand(char[][] map, int playerX, int playerY, boolean[][] positionGold) {
-    String[] moves = {"MOVE N", "MOVE S", "MOVE W", "MOVE E"};
-    int[] change_in_x = {-1, 1, 0, 0};
-    int[] change_in_y = {0, 0, -1, 1};
-    double min_distance = Double.MAX_VALUE;
-    String bestMove = "";
-
-    // Determine the best move
-    for (int i = 0; i < moves.length; i++) {
-        int newbotX = bot_position_X + change_in_x[i];
-        int newbotY = bot_position_Y + change_in_y[i];
-
-        // Validate the move
-        if (newbotX >= 0 && newbotX < map.length && newbotY >= 0 && newbotY < map[0].length 
-                && map[newbotX][newbotY] != '#') {
-            double distance_to_player = Math.sqrt(
-                Math.pow(playerX - newbotX, 2) + Math.pow(playerY - newbotY, 2));
-
-            // Update the best move if closer to the player
-            if (distance_to_player < min_distance) {
-                min_distance = distance_to_player;
-                bestMove = moves[i];
+                // Update the bot's position
+                map[botX][botY] = '.'; // Clear old position
+                botX = newBotX;
+                botY = newBotY;
+                map[botX][botY] = 'B'; // Mark new position
+                return moves[randomIndex];
             }
         }
     }
-
-    // Execute the best move
-    if (!bestMove.isEmpty()) {
-        int newBotX = bot_position_X;
-        int newBotY = bot_position_Y;
-
-        if (bestMove.equals("MOVE N")) {
-            newBotX -= 1;
-        } else if (bestMove.equals("MOVE S")) {
-            newBotX += 1;
-        } else if (bestMove.equals("MOVE W")) {
-            newBotY -= 1;
-        } else if (bestMove.equals("MOVE E")) {
-            newBotY += 1;
-        }
-
-        // Validate and update the move
-        if (newBotX >= 0 && newBotX < map.length && newBotY >= 0 && newBotY < map[0].length 
-                && map[newBotX][newBotY] != '#' && map[newBotX][newBotY] != 'P') {
-            map[bot_position_X][bot_position_Y] = '.'; // Clear old position
-            bot_position_X = newBotX;
-            bot_position_Y = newBotY;
-            map[bot_position_X][bot_position_Y] = 'B'; // Mark new position
-            System.out.println("Bot moved to (" + bot_position_X + ", " + bot_position_Y + ").");
-        } else {
-            System.out.println("Bot failed to move.");
-        }
-    }
-
-    // Check for gold pickup
-    if (positionGold[bot_position_X][bot_position_Y]) {
-        botGold += 1;
-        positionGold[bot_position_X][bot_position_Y] = false; // Remove gold from map
-        System.out.println("Bot picked up gold. Total Gold: " + botGold);
-    }
-}
-*/
-
-
-
 }

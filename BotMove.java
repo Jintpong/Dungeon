@@ -1,4 +1,6 @@
 import java.lang.Math;
+import java.util.Random;
+
 
 public class BotMove{
     private int botX;
@@ -25,7 +27,8 @@ public class BotMove{
         double minDistance = Double.MAX_VALUE;
         String bestMove = "";
 
-        for (int i =0; i < moves.length; i++){
+
+        for (int i = 0; i < moves.length; i++){
             int newBotX = botX + change_in_x[i];
             int newBotY = botY + change_in_y[i];
 
@@ -38,6 +41,8 @@ public class BotMove{
                 }
             }
         }
+
+
         if (!bestMove.isEmpty()){
             map[botX][botY] = '.';
 
@@ -53,8 +58,10 @@ public class BotMove{
             else if (bestMove.equals("Move E")){
                 botY += 1;
             }
-
             map[botX][botY] = 'B';
+        }
+        else{
+            System.out.println("No move was found");
         }
         return bestMove;
 
